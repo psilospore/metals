@@ -26,7 +26,8 @@ import java.nio.channels.Pipe
 final class BloopServers(
     sh: ScheduledExecutorService,
     workspace: AbsolutePath,
-    client: MetalsBuildClient
+    client: MetalsBuildClient,
+    languageClient: MetalsLanguageClient
 )(implicit ec: ExecutionContextExecutorService) {
 
   def newServer(): Future[Option[BuildServerConnection]] = {
@@ -80,7 +81,8 @@ final class BloopServers(
           },
           Cancelable(() => job.cancel(true))
         ),
-        "Bloop"
+        "Bloop",
+        languageClient
       )
       Some(serverConnection)
     }

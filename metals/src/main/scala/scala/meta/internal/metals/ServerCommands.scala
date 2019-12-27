@@ -21,7 +21,17 @@ object ServerCommands {
   val ConnectBuildServer = new Command(
     "build-connect",
     "Connect to build server",
-    """Establish a new connection to the build server and reindex the workspace.
+    """Establish a nw connection to the build server and reindex the workspace.
+      |
+      |This command can be helpful in scenarios when Metals feels unresponsive, for example
+      |when reopening Metals after the computer it has been sleeping.
+      |""".stripMargin
+  )
+
+  val ReconnectBuildServer = new Command(
+    "build-connect",
+    "Connect to build server",
+    """Establish a nw connection to the build server and reindex the workspace.
       |
       |This command can be helpful in scenarios when Metals feels unresponsive, for example
       |when reopening Metals after the computer it has been sleeping.
@@ -192,6 +202,7 @@ object ServerCommands {
     CascadeCompile,
     CancelCompile,
     BspSwitch,
-    StartDebugAdapter
+    StartDebugAdapter,
+    ReconnectBuildServer
   )
 }

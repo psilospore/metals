@@ -115,6 +115,8 @@ final class Doctor(
   ): String = {
 
     val minimumBloopVersion = "1.3.5"
+    println("minimumBloopVersion!!!", minimumBloopVersion)
+    println("bspServerVersion", bspServerVersion)
     def isUnsupportedBloopVersion =
       bspServerVersion.exists(version =>
         !SemVer.isCompatibleVersion(

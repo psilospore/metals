@@ -295,7 +295,8 @@ class MetalsLanguageServer(
     bloopServers = new BloopServers(
       sh,
       workspace,
-      buildClient
+      buildClient,
+      languageClient
     )
     bspServers = new BspServers(
       workspace,
@@ -1155,6 +1156,10 @@ class MetalsLanguageServer(
         slowConnectToBuildServer(forceImport = true).asJavaObject
       case ServerCommands.ConnectBuildServer() =>
         quickConnectToBuildServer().asJavaObject
+        case ServerCommands.ReconnectBuildServer() =>
+        disconnectOldBuildServer().flatMap(_ => 
+          quickConnectToBuildServer()
+        ).asJavaObject
       case ServerCommands.DisconnectBuildServer() =>
         disconnectOldBuildServer().asJavaObject
       case ServerCommands.RunDoctor() =>

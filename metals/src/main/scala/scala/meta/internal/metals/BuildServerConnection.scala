@@ -8,6 +8,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicBoolean
+import scala.meta.internal.metals.MetalsEnrichments._
 
 import ch.epfl.scala.bsp4j._
 import org.eclipse.lsp4j.jsonrpc.Launcher
@@ -20,6 +21,8 @@ import scala.meta.io.AbsolutePath
 import scala.util.Try
 import scala.collection.JavaConverters._
 import com.google.gson.Gson
+import java.net.SocketException
+import scala.meta.internal.jdk.CollectionConverters._
 
 /**
  * An actively running and initialized BSP connection.
@@ -31,7 +34,8 @@ case class BuildServerConnection(
     cancelables: List[Cancelable],
     initializeResult: InitializeBuildResult,
     name: String,
-    version: String
+    version: String,
+    languageClient: MetalsLanguageClient
 )(implicit ec: ExecutionContext)
     extends Cancelable {
 
@@ -59,8 +63,27 @@ case class BuildServerConnection(
   }
 
   private def register[T](e: CompletableFuture[T]): CompletableFuture[T] = {
+    println("register event", e)
     ongoingRequests.add(
-      Cancelable(() => Try(e.completeExceptionally(new InterruptedException())))
+      Cancelable(() => Try(e.completeExceptionally(new InterruptedException())).recover({
+        case e: SocketException => {
+          println("HIII", e)
+          languageClient
+          .showMessageRequest(Messages.ReconnectToBuildServer.params)
+          .asScala
+          .map { item =>
+            if (item == Messages.dontShowAgain) {
+              // notification.dismissForever() TODO
+            }
+            Confirmation.fromBoolean(item == Messages.ReconnectToBuildServer.yes)
+          }
+          e
+        }
+        case e => {
+          println("HIII 2", e)
+          e
+        }
+      }))
     )
     e
   }
@@ -113,7 +136,8 @@ object BuildServerConnection {
       output: OutputStream,
       input: InputStream,
       onShutdown: List[Cancelable],
-      name: String
+      name: String,
+      languageClient: MetalsLanguageClient
   )(implicit ec: ExecutionContextExecutorService): BuildServerConnection = {
     val tracePrinter = GlobalTrace.setupTracePrinter("BSP")
     val launcher = new Launcher.Builder[MetalsBuildServer]()
@@ -136,7 +160,8 @@ object BuildServerConnection {
       stopListening :: onShutdown,
       result,
       name,
-      result.getVersion()
+      result.getVersion(),
+      languageClient: MetalsLanguageClient
     )
   }
 
@@ -152,7 +177,9 @@ object BuildServerConnection {
   ): InitializeBuildResult = {
     val extraParams = BloopExtraBuildParams(
       BuildInfo.scalametaVersion,
-      BuildInfo.supportedScalaVersions.asJava
+      scala.collection.JavaConverters.seqAsJavaList(
+        BuildInfo.supportedScalaVersions //TODO asJava
+      )
     )
     val initializeResult = server.buildInitialize {
       val params = new InitializeBuildParams(

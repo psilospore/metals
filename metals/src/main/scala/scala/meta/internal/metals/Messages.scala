@@ -70,6 +70,25 @@ class Messages(icons: Icons) {
 
   }
 
+    object ReconnectToBuildServer {
+    def yes = new MessageActionItem("Reconnect")
+    val params: ShowMessageRequestParams = {
+      val params = new ShowMessageRequestParams()
+      params.setMessage(
+        s"Lost connection to build server. Reconnect?"
+      )
+      params.setType(MessageType.Info)
+      params.setActions(
+        List(
+          yes,
+          notNow,
+          dontShowAgain
+        ).asJava
+      )
+      params
+    }
+  }
+  
   val PartialNavigation = new MetalsStatusParams(
     "$(info) Partial navigation",
     tooltip =

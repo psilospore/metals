@@ -22,7 +22,7 @@ object MillLspSuite extends BaseImportSuite("mill-import") {
           |/build.sc
           |import mill._, scalalib._
           |object foo extends ScalaModule {
-          |  def scalaVersion = "2.12.10"
+          |  def scalaVersion = "2.13.1"
           |}
         """.stripMargin
       )
@@ -45,7 +45,7 @@ object MillLspSuite extends BaseImportSuite("mill-import") {
         text +
           """|
              |object bar extends ScalaModule {
-             |  def scalaVersion = "2.12.10"
+             |  def scalaVersion = "2.13.1"
              |}
              |""".stripMargin
       }
@@ -71,7 +71,7 @@ object MillLspSuite extends BaseImportSuite("mill-import") {
           |/build.sc
           |import mill._, scalalib._
           |object foo extends ScalaModule {
-          |  def scalaVersion = "2.12.10"
+          |  def scalaVersion = "2.13.1"
           |  /*DEPS*/
           |}
           |/foo/src/reload/Main.scala
@@ -124,7 +124,7 @@ object MillLspSuite extends BaseImportSuite("mill-import") {
         """
           |import mill._, scalalib._
           |object foo extends ScalaModule {
-          |  def scalaVersion = "2.12.10"
+          |  def scalaVersion = "2.13.1"
           |}
         """.stripMargin,
       }
@@ -147,7 +147,7 @@ object MillLspSuite extends BaseImportSuite("mill-import") {
           |/build.sc
           |import mill._, scalalib._
           |object foo extends ScalaModule {
-          |  def scalaVersion = "2.12.10"
+          |  def scalaVersion = "2.13.1"
           |  def scalacOptions = Seq("-Xfatal-warnings", "-Ywarn-unused")
           |}
           |/foo/src/Warning.scala

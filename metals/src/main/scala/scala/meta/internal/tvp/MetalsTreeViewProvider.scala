@@ -217,6 +217,7 @@ class MetalsTreeViewProvider(
             Array(
               TreeViewNode.fromCommand(ServerCommands.ImportBuild),
               TreeViewNode.fromCommand(ServerCommands.ConnectBuildServer),
+              TreeViewNode.fromCommand(ServerCommands.DisconnectBuildServer), //TODO remove
               projects.root,
               libraries.root
             )

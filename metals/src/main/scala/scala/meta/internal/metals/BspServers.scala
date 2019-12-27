@@ -72,7 +72,8 @@ final class BspServers(
       List(
         Cancelable(() => process.destroy())
       ),
-      details.getName
+      details.getName,
+      client
     )
   }
 
